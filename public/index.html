@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>TinyLink — Dashboard</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body class="bg-slate-50 min-h-screen font-sans text-slate-800">
+  <!-- shared header -->
+  <header class="bg-white/90 backdrop-blur sticky top-0 z-30 border-b">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="rounded-full bg-blue-600 w-9 h-9 flex items-center justify-center text-white font-bold"></div>
+        <div>
+          <h1 class="text-lg font-semibold leading-tight">TinyLink</h1>
+          <div class="text-xs text-slate-500">Simple URL shortener — Dashboard</div>
+        </div>
+      </div>
+      <div class="text-sm text-slate-600">
+        Base: <span id="base-url" class="font-medium"></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto p-4 space-y-6">
+    <!-- Create form card -->
+    <section class="bg-white p-4 rounded-2xl shadow-sm border">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-semibold mb-1">Create Short Link</h2>
+          <p class="text-sm text-slate-500">Paste a URL and optionally choose a custom code (6–8 alphanumeric).</p>
+        </div>
+        <div class="text-xs text-slate-400">Tip: codes are unique — duplicates return an error.</div>
+      </div>
+
+      <form id="create-form" class="mt-4 grid gap-3 sm:grid-cols-2">
+        <div class="sm:col-span-2">
+          <label class="block text-sm font-medium mb-1">Target URL</label>
+          <input id="target" name="target" type="url" autocomplete="url"
+            placeholder="https://example.com/path"
+            class="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-200"
+            aria-describedby="target-error" />
+          <p id="target-error" class="mt-1 text-xs text-red-600 hidden"></p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Custom Code (optional)</label>
+          <input id="code" name="code" type="text" inputmode="latin"
+            placeholder="6-8 letters/numbers (e.g. docs23)"
+            class="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-200"
+            aria-describedby="code-error" />
+          <p id="code-error" class="mt-1 text-xs text-red-600 hidden"></p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button id="create-btn" type="submit"
+            class="inline-flex items-center gap-2 justify-center px-4 py-2 rounded-lg bg-blue-600 text-white font-medium shadow-sm disabled:opacity-60"
+          >
+            <svg id="create-spinner" class="hidden animate-spin h-4 w-4" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+            Create
+          </button>
+
+          <div id="create-msg" class="text-sm text-slate-700"></div>
+        </div>
+      </form>
+    </section>
+
+    <!-- Links card -->
+    <section class="bg-white p-4 rounded-2xl shadow-sm border">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <h2 class="text-lg font-semibold">Links</h2>
+          <p class="text-sm text-slate-500">Manage and inspect your short links.</p>
+        </div>
+
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <input id="search" placeholder="Search by code or URL..." class="w-full sm:w-64 border rounded-lg p-2" />
+          <div class="flex items-center gap-2">
+            <label class="text-sm text-slate-500">Sort:</label>
+            <select id="sort" class="border rounded-lg p-2 text-sm">
+              <option value="created_desc">Newest</option>
+              <option value="clicks_desc">Most clicks</option>
+              <option value="code_asc">Code A→Z</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- table / loading / empty states -->
+      <div id="table-wrap" class="mt-4 overflow-x-auto">
+        <!-- loading skeleton -->
+        <div id="loading" class="space-y-2">
+          <div class="h-3 bg-slate-200 rounded w-1/3 animate-pulse"></div>
+          <div class="h-8 bg-slate-100 rounded animate-pulse"></div>
+          <div class="h-8 bg-slate-100 rounded animate-pulse"></div>
+        </div>
+
+        <!-- actual table -->
+        <table id="links-table" class="min-w-full text-left border-separate border-spacing-y-2 hidden">
+          <thead class="text-sm text-slate-600">
+            <tr>
+              <th class="p-3">Code</th>
+              <th class="p-3">Target</th>
+              <th class="p-3">Clicks</th>
+              <th class="p-3">Last Clicked</th>
+              <th class="p-3">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="links-body" class="text-sm"></tbody>
+        </table>
+
+        <!-- empty -->
+        <div id="empty" class="hidden py-6 text-center text-slate-500">
+          No links yet. Create your first short link above.
+        </div>
+
+        <!-- error -->
+        <div id="table-error" class="hidden py-4 text-red-600"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- shared footer -->
+  <footer class="mt-10 text-center text-xs text-slate-400 pb-6">
+    TinyLink • simple demo • health: <a href="/healthz" class="text-blue-600">/healthz</a>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>
